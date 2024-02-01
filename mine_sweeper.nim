@@ -88,12 +88,18 @@ proc user_input(self: GameBoard): tuple[x, y: int] =
 
 proc open*(self: GameBoard, x, y: int): bool =
     var p = self.field[y][x]
-    p.isOpen = true
-    if p.isBomb:
-        result = false
-    else:
+    if p.isFlaged:
         result = true
+    else:
+        p.isOpen = true
+        if p.isBomb:
+            result = false
+        else:
+            result = true
 
+proc flag*(self: GameBoard, x, y:int) =
+    var p = self.field[y][x]
+    p.flag
 
 proc openArrownd(self: GameBoard, y, x: int): int =
     result = 0

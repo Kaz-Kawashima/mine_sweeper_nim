@@ -50,12 +50,15 @@ proc reflesh(button_mat: seq[seq[Button]], gb: GameBoard) =
             if pannel.isOpen:
                 button.text = pannel.toString
                 button.enabled = false
+            elif pannel.isFlaged:
+                button.text = "F"
+                button.enabled = true
             else:
                 button.text = " "
                 button.enabled = true
 
 # click action and game logic
-proc gbopen(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
+proc open(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
     let x = col + 1
     let y = row + 1
     let ret = gb.open(x, y)
@@ -72,6 +75,12 @@ proc gbopen(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
         let res = window.msgBox("Game Over")
         quit(0)
 
+proc flag(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
+    let x = col + 1
+    let y = row + 1
+    gb.flag(x, y)
+    reflesh(button_mat, gb)
+
 # set click event
 for row in 0 ..< num_row:
     capture row:
@@ -79,8 +88,11 @@ for row in 0 ..< num_row:
             capture col:
                 var button = button_mat[row][col]
                 capture button:
-                    button.onClick = proc (event: ClickEvent) =
-                        gbopen(gb, row, col, button_mat)
+                    button.onMouseButtonDown = proc (event: MouseEvent) =
+                        if event.button == MouseButtonLeft:
+                            gb.open(row, col, button_mat)
+                        elif event.button == MouseButtonRight:
+                            gb.flag(row, col, button_mat)
 
 window.show()
 app.run()
