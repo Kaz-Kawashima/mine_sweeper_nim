@@ -1,11 +1,11 @@
-import pannel
+import Panel
 import std/random
 import std/strutils
 import system
 
 type
     GameBoard* = ref object of RootObj
-        field*: seq[seq[Pannel]]
+        field*: seq[seq[Panel]]
         sizeX: int
         sizeY: int
         fieldSizeX: int
@@ -18,7 +18,7 @@ proc setBomb(self: GameBoard) =
         let x = rand(1..self.sizeX)
         let y = rand(1..self.sizeY)
         if not self.field[y][x].isBomb:
-            self.field[y][x] = makeBombPannel()
+            self.field[y][x] = makeBombPanel()
             finished = true
 
 proc calcBombValue(self: GameBoard, y, x: int): int =
@@ -31,22 +31,22 @@ proc calcBombValue(self: GameBoard, y, x: int): int =
 proc calcBombNumber(self: GameBoard) =
     for y in 1 .. self.sizeY:
         for x in 1 .. self.sizeX:
-            let current_pannel = self.field[y][x]
-            if not current_pannel.isBomb:
-                ((BlankPannel)current_pannel).bombValue = self.calcBombValue(y, x)
+            let current_Panel = self.field[y][x]
+            if not current_Panel.isBomb:
+                ((BlankPanel)current_Panel).bombValue = self.calcBombValue(y, x)
 
 proc init*(self: GameBoard, x, y, numBomb: int) =
     self.sizeX = x
     self.sizeY = y
     self.fieldSizeX = x + 2
     self.fieldSizeY = y + 2
-    self.field = newSeq[seq[Pannel]](self.fieldSizeY)
+    self.field = newSeq[seq[Panel]](self.fieldSizeY)
     for i in 0 ..< self.fieldSizeY:
-        self.field[i] = newSeq[Pannel](self.fieldSizeX)
-    #FillPannel
+        self.field[i] = newSeq[Panel](self.fieldSizeX)
+    #FillPanel
     for y in 1 ..< (self.fieldSizeY - 1):
         for x in 1 ..< (self.fieldSizeX - 1):
-            self.field[y][x] = makeBlankPannel()
+            self.field[y][x] = makeBlankPanel()
     for _ in 1 .. numBomb:
         self.setBomb()
     #FillBoarder
@@ -117,7 +117,7 @@ proc cascadeOpen*(self: GameBoard) =
         for y in 1 .. self.sizeY:
             for x in 1 .. self.sizeX:
                 let p = self.field[y][x]
-                if p.isOpen and ((BlankPannel)p).bombValue == 0:
+                if p.isOpen and ((BlankPanel)p).bombValue == 0:
                     newOpen += self.openArrownd(y, x)
 
 proc bombOpen*(self: GameBoard) =
@@ -131,8 +131,8 @@ proc bombOpen*(self: GameBoard) =
 proc isFinished*(self: GameBoard): bool =
     for y in 1 .. self.sizeY:
         for x in 1 .. self.sizeX:
-            let current_pannel = self.field[y][x]
-            if not current_pannel.isOpen and not current_pannel.isBomb:
+            let current_Panel = self.field[y][x]
+            if not current_Panel.isOpen and not current_Panel.isBomb:
                 return false
     return true
 

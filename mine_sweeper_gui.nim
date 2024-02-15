@@ -4,7 +4,7 @@ import std/sugar
 import std/enumerate
 import system
 import mine_sweeper
-import pannel
+import panel
 
 # define game field
 let num_col = 9
@@ -46,11 +46,11 @@ for row in 0 ..< num_row:
 proc reflesh(button_mat: seq[seq[Button]], gb: GameBoard) =
     for y, button_row in enumerate(1, button_mat):
         for x, button in enumerate(1, button_row):
-            let pannel = gb.field[y][x]
-            if pannel.isOpen:
-                button.text = pannel.toString
+            let Panel = gb.field[y][x]
+            if Panel.isOpen:
+                button.text = Panel.toString
                 button.enabled = false
-            elif pannel.isFlagged:
+            elif Panel.isFlagged:
                 button.text = "F"
                 button.enabled = true
             else:

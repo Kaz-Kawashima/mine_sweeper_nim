@@ -1,19 +1,19 @@
 import std/strformat
 
 type
-    Pannel* = ref object of RootObj
+    Panel* = ref object of RootObj
         isOpen*: bool
         isFlagged*: bool
 
-method isBomb*(self: Pannel): bool {.base.} = false
+method isBomb*(self: Panel): bool {.base.} = false
 
-method toString*(self: Pannel): string {.base.} =
+method toString*(self: Panel): string {.base.} =
     if self.isopen:
         result = "F"
     else:
         result = "z"
 
-method flag* (self: Pannel) =
+method flag* (self: Panel) =
     if not self.isOpen:
         if self.isFlagged:
             self.isFlagged = false
@@ -21,36 +21,36 @@ method flag* (self: Pannel) =
             self.isFlagged = true
 
 type
-    BombPannel* = ref object of Pannel
+    BombPanel* = ref object of Panel
 
-method isBomb*(self: BombPannel): bool = true
+method isBomb*(self: BombPanel): bool = true
 
-method toString*(self: BombPannel): string =
+method toString*(self: BombPanel): string =
     result = "x"
     if self.isOpen:
         result = "B"
     elif self.isFlagged:
         result = "F"
 
-proc makeBombPannel*(): BombPannel =
-    result = new BombPannel
+proc makeBombPanel*(): BombPanel =
+    result = new BombPanel
     result.isOpen = false
     result.isFlagged = false
 
 type
-    BlankPannel* = ref object of Pannel
+    BlankPanel* = ref object of Panel
         bombValue*: int
 
-proc makeBlankPannel*(): BlankPannel =
-    result = new BlankPannel
+proc makeBlankPanel*(): BlankPanel =
+    result = new BlankPanel
     result.isOpen = false
     result.isFlagged = false
     result.bombValue = 0
 
-proc setBombValue*(self: BlankPannel, value: int) =
+proc setBombValue*(self: BlankPanel, value: int) =
     self.bombValue = value
 
-method toString*(self: BlankPannel): string =
+method toString*(self: BlankPanel): string =
     result = "x"
     if self.isOpen:
         if self.bombValue > 0:
@@ -61,13 +61,13 @@ method toString*(self: BlankPannel): string =
         result = "F"
 
 type
-    BorderPannel* = ref object of Pannel
+    BorderPanel* = ref object of Panel
 
 proc
-    makeBorder*(): BorderPannel =
-        result = new BorderPannel
+    makeBorder*(): BorderPanel =
+        result = new BorderPanel
         result.isOpen = true
         result.isFlagged = false
 
-method toString*(self: BorderPannel): string =
+method toString*(self: BorderPanel): string =
     result = "="
