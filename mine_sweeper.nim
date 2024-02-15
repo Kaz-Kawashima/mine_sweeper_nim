@@ -88,7 +88,7 @@ proc user_input(self: GameBoard): tuple[x, y: int] =
 
 proc open*(self: GameBoard, x, y: int): bool =
     var p = self.field[y][x]
-    if p.isFlaged:
+    if p.isFlagged:
         result = true
     else:
         p.isOpen = true
@@ -117,7 +117,7 @@ proc cascadeOpen*(self: GameBoard) =
         for y in 1 .. self.sizeY:
             for x in 1 .. self.sizeX:
                 let p = self.field[y][x]
-                if p.toString() == " ":
+                if p.isOpen and ((BlankPannel)p).bombValue == 0:
                     newOpen += self.openArrownd(y, x)
 
 proc bombOpen*(self: GameBoard) =

@@ -19,7 +19,7 @@ let tile_size = button_size + margin_size * 2
 
 app.init()
 
-var window = newWindow("mine sweeper---")
+var window = newWindow("mine sweeper--")
 window.width = (tile_size + 3) * num_col
 window.height = (tile_size + 3) * num_row + 30
 
@@ -50,7 +50,7 @@ proc reflesh(button_mat: seq[seq[Button]], gb: GameBoard) =
             if pannel.isOpen:
                 button.text = pannel.toString
                 button.enabled = false
-            elif pannel.isFlaged:
+            elif pannel.isFlagged:
                 button.text = "F"
                 button.enabled = true
             else:

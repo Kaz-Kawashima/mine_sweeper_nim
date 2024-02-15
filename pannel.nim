@@ -3,7 +3,7 @@ import std/strformat
 type
     Pannel* = ref object of RootObj
         isOpen*: bool
-        isFlaged*: bool
+        isFlagged*: bool
 
 method isBomb*(self: Pannel): bool {.base.} = false
 
@@ -15,10 +15,10 @@ method toString*(self: Pannel): string {.base.} =
 
 method flag* (self: Pannel) =
     if not self.isOpen:
-        if self.isFlaged:
-            self.isFlaged = false
+        if self.isFlagged:
+            self.isFlagged = false
         else:
-            self.isFlaged = true
+            self.isFlagged = true
 
 type
     BombPannel* = ref object of Pannel
@@ -29,13 +29,13 @@ method toString*(self: BombPannel): string =
     result = "x"
     if self.isOpen:
         result = "B"
-    elif self.isFlaged:
+    elif self.isFlagged:
         result = "F"
 
 proc makeBombPannel*(): BombPannel =
     result = new BombPannel
     result.isOpen = false
-    result.isFlaged = false
+    result.isFlagged = false
 
 type
     BlankPannel* = ref object of Pannel
@@ -44,7 +44,7 @@ type
 proc makeBlankPannel*(): BlankPannel =
     result = new BlankPannel
     result.isOpen = false
-    result.isFlaged = false
+    result.isFlagged = false
     result.bombValue = 0
 
 proc setBombValue*(self: BlankPannel, value: int) =
@@ -57,7 +57,7 @@ method toString*(self: BlankPannel): string =
             result = fmt"{self.bombValue}"
         else:
             result = " "
-    elif self.isFlaged:
+    elif self.isFlagged:
         result = "F"
 
 type
@@ -67,7 +67,7 @@ proc
     makeBorder*(): BorderPannel =
         result = new BorderPannel
         result.isOpen = true
-        result.isFlaged = false
+        result.isFlagged = false
 
 method toString*(self: BorderPannel): string =
     result = "="
