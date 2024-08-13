@@ -23,9 +23,10 @@ proc setBomb(self: GameBoard) =
 
 proc calcBombValue(self: GameBoard, y, x: int): int =
     result = 0
-    for yy in (y - 1) .. (y + 1):
-        for xx in (x - 1) .. (x + 1):
-            if self.field[yy][xx].isBomb:
+    for row in (y - 1) .. (y + 1):
+        for col in (x - 1) .. (x + 1):
+            # if self.field[row][col] of BombPanel:
+            if self.field[row][col].isBomb:
                 result += 1
 
 proc calcBombNumber(self: GameBoard) =
@@ -103,9 +104,9 @@ proc flag*(self: GameBoard, x, y:int) =
 
 proc openArrownd(self: GameBoard, y, x: int): int =
     result = 0
-    for yy in (y - 1) .. (y + 1):
-        for xx in (x - 1) .. (x + 1):
-            var p = self.field[yy][xx]
+    for row in (y - 1) .. (y + 1):
+        for col in (x - 1) .. (x + 1):
+            var p = self.field[row][col]
             if not p.isOpen:
                 p.isOpen = true
                 result += 1
@@ -127,7 +128,6 @@ proc bombOpen*(self: GameBoard) =
             if not p.isOpen and p.isBomb:
                 p.isOpen = true
 
-
 proc isFinished*(self: GameBoard): bool =
     for y in 1 .. self.sizeY:
         for x in 1 .. self.sizeX:
@@ -135,6 +135,13 @@ proc isFinished*(self: GameBoard): bool =
             if not current_Panel.isOpen and not current_Panel.isBomb:
                 return false
     return true
+
+proc countFlags*(self: GameBoard): int =
+    result = 0
+    for y in 1 .. self.sizeY:
+        for x in 1 .. self.sizeX:
+            if self.field[y][x].isFlagged:
+                result += 1
 
 proc game(self: GameBoard): bool =
     var finished = false

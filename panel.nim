@@ -13,7 +13,7 @@ method toString*(self: Panel): string {.base.} =
     else:
         result = "z"
 
-method flag* (self: Panel) =
+method flag* (self: Panel) {.base.} =
     if not self.isOpen:
         if self.isFlagged:
             self.isFlagged = false

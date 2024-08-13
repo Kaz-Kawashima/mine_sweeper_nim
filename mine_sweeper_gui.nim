@@ -2,6 +2,7 @@ import nigui
 import nigui/msgbox
 import std/sugar
 import std/enumerate
+import std/strformat
 import system
 import mine_sweeper
 import panel
@@ -19,7 +20,7 @@ let tile_size = button_size + margin_size * 2
 
 app.init()
 
-var window = newWindow("mine sweeper--")
+var window = newWindow("mine sweeper-- (F:0)")
 window.width = (tile_size + 3) * num_col
 window.height = (tile_size + 3) * num_row + 30
 
@@ -65,6 +66,8 @@ proc open(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
     if ret:
         gb.cascadeOpen
         reflesh(button_mat, gb)
+        let num_flag = gb.countFlags
+        window.title = (fmt"mine sweeper-- (F:{num_flag})")
         if gb.isFinished:
             let res = window.msgBox("You Win! Click new game!")
             gb.init(num_col, num_row, 10)
@@ -80,6 +83,9 @@ proc flag(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
     let y = row + 1
     gb.flag(x, y)
     reflesh(button_mat, gb)
+    let num_flag = gb.countFlags
+    window.title = (fmt"mine sweeper-- (F:{num_flag})")
+
 
 # set click event
 for row in 0 ..< num_row:
