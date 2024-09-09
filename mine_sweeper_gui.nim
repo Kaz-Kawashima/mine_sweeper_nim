@@ -62,7 +62,7 @@ proc reflesh(button_mat: seq[seq[Button]], gb: GameBoard) =
 proc open(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
     let x = col + 1
     let y = row + 1
-    let ret = gb.open(x, y)
+    let ret = gb.open(y, x)
     if ret:
         gb.cascadeOpen
         reflesh(button_mat, gb)
@@ -81,7 +81,7 @@ proc open(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
 proc flag(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
     let x = col + 1
     let y = row + 1
-    gb.flag(x, y)
+    gb.flag(y, x)
     reflesh(button_mat, gb)
     let num_flag = gb.countFlags
     window.title = (fmt"mine sweeper-- (F:{num_flag})")

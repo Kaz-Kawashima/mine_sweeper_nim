@@ -1,7 +1,9 @@
 import Panel
+import get_key_input
 import std/random
-import std/strutils
+import std/strformat
 import system
+import os
 
 type
     GameBoard* = ref object of RootObj
@@ -10,6 +12,8 @@ type
         sizeY: int
         fieldSizeX: int
         fieldSizeY: int
+        cursor_col: int
+        cursor_row: int
 
 proc setBomb(self: GameBoard) =
     randomize()
@@ -58,37 +62,42 @@ proc init*(self: GameBoard, x, y, numBomb: int) =
         self.field[0][x] = makeBorder()
         self.field[self.fieldSizeY - 1][x] = makeBorder()
     self.calcBombNumber()
+    self.cursor_col = 1
+    self.cursor_row = 1
 
 proc print(self: GameBoard) =
     var board = ""
     for y in 0 ..< self.fieldSizeY:
         for x in 0 ..< self.fieldSizeX:
-            board = board & self.field[y][x].toString() & " "
+            if y == self.cursor_row and x == self.cursor_col:
+                board = board & "@ "
+            else:
+                board = board & self.field[y][x].toString() & " "
         board = board & "\n"
     echo board
 
-proc user_input(self: GameBoard): tuple[x, y: int] =
-    var inputX, inputY: int
-    while true:
-        echo "input x"
-        try:
-            inputX = stdin.readLine.parseInt
-        except:
-            continue
-        if inputX in 1 .. self.sizeX:
-            break
-    while true:
-        echo "input y"
-        try:
-            inputY = stdin.readLine.parseInt
-        except:
-            continue
-        if inputY in 1 .. self.sizeY:
-            break
-    result = (inputX, inputY)
+# proc user_input(self: GameBoard): tuple[x, y: int] =
+#     var inputX, inputY: int
+#     while true:
+#         echo "input x"
+#         try:
+#             inputX = stdin.readLine.parseInt
+#         except:
+#             continue
+#         if inputX in 1 .. self.sizeX:
+#             break
+#     while true:
+#         echo "input y"
+#         try:
+#             inputY = stdin.readLine.parseInt
+#         except:
+#             continue
+#         if inputY in 1 .. self.sizeY:
+#             break
+#     result = (inputX, inputY)
 
-proc open*(self: GameBoard, x, y: int): bool =
-    var p = self.field[y][x]
+proc open*(self: GameBoard, row, col: int): bool =
+    var p = self.field[row][col]
     if p.isFlagged:
         result = true
     else:
@@ -98,8 +107,8 @@ proc open*(self: GameBoard, x, y: int): bool =
         else:
             result = true
 
-proc flag*(self: GameBoard, x, y:int) =
-    var p = self.field[y][x]
+proc flag*(self: GameBoard, row, col:int) =
+    var p = self.field[row][col]
     p.flag
 
 proc openArrownd(self: GameBoard, y, x: int): int =
@@ -143,12 +152,50 @@ proc countFlags*(self: GameBoard): int =
             if self.field[y][x].isFlagged:
                 result += 1
 
+proc key_input(self: GameBoard): bool =
+    let flag_count = self.countFlags
+    var message = fmt"input <- ^v -> / O open / F flag {flag_count}"
+    echo message
+
+    var safe = true
+    let input = getKey()
+    case input:
+    of Open:
+        safe = self.open(self.cursor_row, self.cursor_col)
+    of Flag:
+        self.flag(self.cursor_row, self.cursor_col)
+    of Up:
+        self.cursor_row -= 1
+        if self.cursor_row < 1:
+            self.cursor_row = 1
+    of Down:
+        self.cursor_row += 1
+        if self.cursor_row > self.sizeY:
+            self.cursor_row = self.sizeY
+    of Left:
+        self.cursor_col -= 1
+        if self.cursor_col < 1:
+            self.cursor_col = 1
+    of Right:
+        self.cursor_col += 1
+        if self.cursor_col > self.sizeX:
+            self.cursor_col = self.sizeX
+    of Quit:
+        safe = false
+    return safe
+
+proc clearScreen() =
+    when defined(windows):
+        discard execShellCmd("cls")
+    else:
+        discard execShellCmd("clear")
+
 proc game(self: GameBoard): bool =
     var finished = false
     while not finished:
         self.print()
-        let (x, y) = self.user_input()
-        var ret = self.open(x, y)
+        var ret = self.key_input()
+        clearScreen()
         if ret:
             self.cascadeOpen()
         else:
@@ -156,7 +203,7 @@ proc game(self: GameBoard): bool =
             self.print()
             return false
         finished = self.isFinished()
-    self.bombOpen()
+    # self.bombOpen()
     self.print()
     return true
 
