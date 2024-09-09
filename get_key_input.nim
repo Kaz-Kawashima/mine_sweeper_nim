@@ -6,7 +6,7 @@ proc getch(): cint {.importc, header: "<conio.h>".}
 
 type
     GameInput* = enum
-        Open,Flag,Up,Down,Left,Right,Quit
+        Open, Flag, Up, Down, Left, Right, Quit
 
 proc getKey*(): GameInput =
     while true:

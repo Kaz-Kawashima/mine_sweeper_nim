@@ -107,7 +107,7 @@ proc open*(self: GameBoard, row, col: int): bool =
         else:
             result = true
 
-proc flag*(self: GameBoard, row, col:int) =
+proc flag*(self: GameBoard, row, col: int) =
     var p = self.field[row][col]
     p.flag
 
