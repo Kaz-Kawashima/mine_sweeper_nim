@@ -1,0 +1,13 @@
+{
+	"configurations": [
+		{
+			"type": "gdb",
+			"request": "launch",
+			"preLaunchTask": "nim: build current file (for debugging)",
+			"name": "nim: debug current file",
+			"target": "${workspaceRoot}/bin/${fileBasenameNoExtension}",
+			"cwd": "${workspaceRoot}",
+			"valuesFormatting": "parseText"
+		}
+	]
+}

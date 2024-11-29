@@ -190,6 +190,10 @@ proc clearScreen() =
     else:
         discard execShellCmd("clear")
 
+proc hideCursor(self: GameBoard) =
+    self.cursor_col = -1
+    self.cursor_row = -1
+
 proc game(self: GameBoard): bool =
     var finished = false
     while not finished:
@@ -200,10 +204,12 @@ proc game(self: GameBoard): bool =
             self.cascadeOpen()
         else:
             self.bombOpen()
+            self.hideCursor()
             self.print()
             return false
         finished = self.isFinished()
     # self.bombOpen()
+    self.hideCursor()
     self.print()
     return true
 

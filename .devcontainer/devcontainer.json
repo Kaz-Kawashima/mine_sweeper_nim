@@ -1,0 +1,22 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
+{
+	"name": "mine_sweeper_nim_devcontainer",
+	// use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+	"features": {
+		"ghcr.io/devcontainers-extra/features/nim-asdf:2": {}	//nim, nimble
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"NimLang.nimlang",						//Nim lang extension
+				"webfreak.debug",						//fpr Nim debug
+				"streetsidesoftware.code-spell-checker"	//spell checker
+			]
+		}
+	},
+	"postCreateCommand": [
+		".devcontainer/postCreateCommand.sh"	//install nimlang server (take a long time)
+	]
+}
