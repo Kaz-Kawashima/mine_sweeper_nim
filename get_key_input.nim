@@ -1,8 +1,20 @@
-{.emit: """
-#include <conio.h>
-""".}
+import termios, posix
 
-proc getch(): cint {.importc, header: "<conio.h>".}
+var originalTermios: Termios
+
+proc enableRawMode*() =
+  discard tcgetattr(STDIN_FILENO, addr originalTermios)
+  var raw = originalTermios
+  raw.c_lflag = raw.c_lflag and not Cflag(ECHO or ICANON)
+  discard tcsetattr(STDIN_FILENO, TCSAFLUSH, addr raw)
+
+proc disableRawMode*() =
+  discard tcsetattr(STDIN_FILENO, TCSAFLUSH, addr originalTermios)
+
+proc getch(): char =
+  var c: char
+  discard read(STDIN_FILENO, addr c, 1)
+  result = c
 
 type
     GameInput* = enum
@@ -11,30 +23,29 @@ type
 proc getKey*(): GameInput =
     while true:
         var input = getch()
-        var ch = char(input)
-        if input == 0x00 or input == 0xe0:
-            input = getch()
-            ch = char(input)
         case input:
-        of cint('o'), cint('O'):
+        of 'o', 'O':
             return Open
-        of cint('f'), cint('F'):
+        of 'f', 'F':
             return Flag
-        of cint('q'), cint('Q'):
+        of 'q', 'Q':
             # echo "Quit"
             return Quit
-        of 0x4b:
-            # echo "Left"
-            return Left
-        of 0x4d:
-            # echo "Right"
-            return Right
-        of 0x48:
-            # echo "Up"
-            return Up
-        of 0x50:
-            # echo "Down"
-            return Down
+        of '\x1b':
+            input = getch()
+            if input == '[':
+                input = getch()
+                case input:
+                of 'A':
+                    return Up
+                of 'B':
+                    return Down
+                of 'C':
+                    return Right
+                of 'D':
+                    return Left
+                else:
+                    discard
         else:
             # echo "input again"
             discard

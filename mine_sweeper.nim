@@ -1,4 +1,4 @@
-import Panel
+import panel
 import get_key_input
 import std/random
 import std/strformat
@@ -208,6 +208,7 @@ proc game(self: GameBoard): bool =
     return true
 
 if isMainModule:
+    enableRawMode()
     var gb = new GameBoard
     gb.init(9, 9, 10)
     let ret = gb.game()
@@ -215,3 +216,4 @@ if isMainModule:
         echo "Game Finished!"
     else:
         echo "Game Over!"
+    disableRawMode()
