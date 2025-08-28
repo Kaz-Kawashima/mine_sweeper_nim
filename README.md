@@ -8,13 +8,25 @@ This code is my Nim programming practice.
 
 ## Dependency
 
-- [nigui](https://github.com/simonkrauter/NiGui)
+- GUI game
+    - [nigui](https://github.com/simonkrauter/NiGui)
+- CUI game
+    - [illwill](https://github.com/johnnovak/illwill)
 
 ## Compilation
+
+### GUI game
 
 ```bash
 nimble install nigui
 nim c --app:gui -d:release mine_sweeper_gui.nim
+```
+
+### CUI Game
+
+```bash
+nimble install illwill
+nim c mine_sweeper_cui.nim
 ```
 
 ## Impression about Nim

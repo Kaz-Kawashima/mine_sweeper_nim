@@ -62,7 +62,10 @@ proc reflesh(button_mat: seq[seq[Button]], gb: GameBoard) =
 proc open(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
     let x = col + 1
     let y = row + 1
+    if gb.getStatus() == Uninitialized:
+        gb.setBombAll(y, x)
     let ret = gb.open(y, x)
+    discard gb.getStatus()
     if ret:
         gb.cascadeOpen
         reflesh(button_mat, gb)
