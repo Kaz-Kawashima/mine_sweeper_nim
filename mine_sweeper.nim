@@ -100,25 +100,7 @@ proc print(self: GameBoard) =
         board = board & "\n"
     echo board
 
-proc open*(self: GameBoard, row, col: int): bool =
-    var p = self.field[row][col]
-    if p.isFlagged:
-        result = true
-    else:
-        p.isOpen = true
-        if p.isBomb:
-            result = false
-        else:
-            result = true
-
-proc open*(self: GameBoard): bool =
-    return self.open(self.cursor_row, self.cursor_col)
-
-proc flag*(self: GameBoard, row, col: int) =
-    var p = self.field[row][col]
-    p.flag
-
-proc openArrownd(self: GameBoard, y, x: int): int =
+proc openAround(self: GameBoard, y, x: int): int =
     result = 0
     for row in (y - 1) .. (y + 1):
         for col in (x - 1) .. (x + 1):
@@ -126,32 +108,6 @@ proc openArrownd(self: GameBoard, y, x: int): int =
             if not p.isOpen:
                 p.isOpen = true
                 result += 1
-
-proc cascadeOpen*(self: GameBoard) =
-    var newOpen = 1
-    while newOpen > 0:
-        newOpen = 0
-        for y in 1 .. self.sizeY:
-            for x in 1 .. self.sizeX:
-                let p = self.field[y][x]
-                if p.isOpen and ((BlankPanel)p).bombValue == 0:
-                    newOpen += self.openArrownd(y, x)
-
-proc bombOpen*(self: GameBoard) =
-    for y in 1 .. self.sizeY:
-        for x in 1 .. self.sizeX:
-            let p = self.field[y][x]
-            if not p.isOpen and p.isBomb:
-                p.isOpen = true
-
-proc isFinished*(self: GameBoard): bool =
-    for y in 1 .. self.sizeY:
-        for x in 1 .. self.sizeX:
-            let current_Panel = self.field[y][x]
-            if not current_Panel.isOpen and not current_Panel.isBomb:
-                return false
-    return true
-
 
 proc getStatus*(self: GameBoard): GameStatus =
     if self.status == Uninitialized:
@@ -166,6 +122,44 @@ proc getStatus*(self: GameBoard): GameStatus =
             if not current_Panel.isOpen and not current_Panel.isBomb:
                 self.status = Playing
     return self.status
+
+proc cascadeOpen(self: GameBoard) =
+    var newOpen = 1
+    while newOpen > 0:
+        newOpen = 0
+        for y in 1 .. self.sizeY:
+            for x in 1 .. self.sizeX:
+                let p = self.field[y][x]
+                if p.isOpen and ((BlankPanel)p).bombValue == 0:
+                    newOpen += self.openAround(y, x)
+
+proc open*(self: GameBoard, row, col: int): bool =
+    var p = self.field[row][col]
+    if p.isFlagged:
+        result = true
+    else:
+        p.isOpen = true
+        if p.isBomb:
+            result = false
+        else:
+            result = true
+    if result:
+        self.cascadeOpen()
+    discard self.getStatus()
+
+proc open*(self: GameBoard): bool =
+    return self.open(self.cursor_row, self.cursor_col)
+
+proc flag*(self: GameBoard, row, col: int) =
+    var p = self.field[row][col]
+    p.flag
+
+proc bombOpen*(self: GameBoard) =
+    for y in 1 .. self.sizeY:
+        for x in 1 .. self.sizeX:
+            let p = self.field[y][x]
+            if not p.isOpen and p.isBomb:
+                p.isOpen = true
 
 proc countFlags*(self: GameBoard): int =
     result = 0

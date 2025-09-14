@@ -65,13 +65,11 @@ proc open(gb: GameBoard, row, col: int, button_mat: seq[seq[Button]]) =
     if gb.getStatus() == Uninitialized:
         gb.setBombAll(y, x)
     let ret = gb.open(y, x)
-    discard gb.getStatus()
     if ret:
-        gb.cascadeOpen
         reflesh(button_mat, gb)
         let num_flag = gb.countFlags
         window.title = (fmt"mine sweeper-- (F:{num_flag})")
-        if gb.isFinished:
+        if gb.getStatus == Win:
             let res = window.msgBox("You Win! Click new game!")
             gb.init(num_col, num_row, 10)
             reflesh(button_mat, gb)
