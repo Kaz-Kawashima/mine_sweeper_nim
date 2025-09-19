@@ -4,11 +4,11 @@ import panel
 import std/strformat
 
 type Tui = ref object
-    tb :TerminalBuffer
-    width, height, num_row, num_col :int
-    gb :GameBoard
+    tb: TerminalBuffer
+    width, height, num_row, num_col: int
+    gb: GameBoard
 
-proc newTui*(num_row, num_col, num_bomb:int): Tui =
+proc newTui*(num_row, num_col, num_bomb: int): Tui =
     var tui = new(Tui)
     tui.width = terminalWidth()
     tui.height = terminalHeight()
@@ -60,10 +60,10 @@ proc print_game(self: var Tui) =
     var message = fmt"input <- ^v -> / O open / F flag {gb.countFlags}"
     if status == Win:
         self.tb.setForegroundColor(fgGreen)
-        message =  "You Win!"
+        message = "You Win!"
     elif status == Lose:
         self.tb.setForegroundColor(fgMagenta)
-        message =  "Game Over"
+        message = "Game Over"
 
     self.tb.setCursorPos(0, num_row + 2)
     self.tb.write(message)
@@ -92,16 +92,14 @@ proc start_cui_game(self: var Tui) =
     let num_col = self.num_row
     let num_row = self.num_col
     var gb = self.gb
-    illwillInit(fullscreen=true)
+    illwillInit(fullscreen = true)
     setControlCHook(exitProc)
     hideCursor()
-    var is_safe = true
     while true:
         self.print_game
         let status = gb.getStatus()
         if status == Win or status == Lose:
             self.game_end_dialog()
-            is_safe = true
         var key = getKey()
         case key
         of Key.Escape, Key.Q:

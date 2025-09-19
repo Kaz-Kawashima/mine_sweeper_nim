@@ -5,8 +5,8 @@ import system
 import os
 
 type
-    GameStatus* = enum 
-        Uninitialized, Playing, Win, Lose 
+    GameStatus* = enum
+        Uninitialized, Playing, Win, Lose
 
 type
     GameBoard* = ref object of RootObj
@@ -23,7 +23,7 @@ type
 proc getCursor*(self: GameBoard): (int, int) =
     return (self.cursor_row, self.cursor_col)
 
-proc setBomb(self: GameBoard, cursor_row, cursor_col:int) =
+proc setBomb(self: GameBoard, cursor_row, cursor_col: int) =
     randomize()
     while true:
         let x = rand(1..self.sizeX)
@@ -73,7 +73,7 @@ proc init*(self: GameBoard, x, y, numBomb: int) =
     self.cursor_row = 1
     self.status = Uninitialized
 
-proc setBombAll*(self: GameBoard, cursor_row, cursor_col:int) =
+proc setBombAll*(self: GameBoard, cursor_row, cursor_col: int) =
     for _ in 1 .. self.numBomb:
         self.setBomb(cursor_row, cursor_col)
     self.calcBombNumber()
